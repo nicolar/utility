@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Filewrite backend for CUPS
+#
+# Nicola Ruggero <nicola@nxnt.org>
+#
+
+TARGETFILE=${DEVICE_URI#filewrite:}-$(date +%d%m%Y)-$(date +%H%M%S%N)
+
+if [ $# -eq 0 ]; then
+	echo "direct filewrite \"Unknown\" \"Print any job to file specified in device-URI\""
+	exit 1
+fi
+
+tmp_file=$(mktemp)
+cat $6 > $tmp_file
+
+## Remove the formfeed (FF) character
+tr -d "\014" < $tmp_file > $TARGETFILE
+chmod 640 $TARGETFILE
+
+# Cleanup
+rm -f $tmp_file
