@@ -30,11 +30,12 @@ func main() {
 	var inString string
 
 	string1 = "abcdefghijklmnopqrstuvwxyz "
-	if os.Args[0] == "" {
+	if len(os.Args) < 2 {
 		fmt.Println("Usage: rot <string_to_decode>")
 		os.Exit(1)
 	}
 	inString = os.Args[1]
+	fmt.Println(inString)
 	byteInString := []byte(inString)
 	lenInString := len(inString)
 
