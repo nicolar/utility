@@ -62,7 +62,7 @@ func main() {
 
 	// Command line options
 	localAddr := flag.String("local", ":25", "local address")
-	remoteAddr := flag.String("remote", ":25", "remote address")
+	remoteAddr := flag.String("remote", ":2525", "remote address")
 	logFile := flag.String("log", "smtp-proxy.log", "log file")
 	verboseFlag := flag.Bool("verbose", false, "Print additional information")
 	showSwVer := flag.Bool("version", false, "Print software version and exit")
