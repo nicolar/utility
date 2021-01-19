@@ -24,6 +24,7 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -160,7 +161,7 @@ func handleRequest(conn net.Conn, rconn net.Conn, desc string, connUUID string) 
 				debug.PrintStack()
 			}
 		}
-		log.Printf("[%s] handleRequest: deferred connection closure: %s\n", connUUID, desc)
+		logVerbosef("[%s] handleRequest: deferred connection closure: %s\n", connUUID, desc)
 		conn.Close()
 		rconn.Close()
 	}()
@@ -173,10 +174,13 @@ func handleRequest(conn net.Conn, rconn net.Conn, desc string, connUUID string) 
 	for {
 		// Read SMTP data from source
 		start := time.Now()
-		log.Printf("[%s]   conn.Read -> %s\n", connUUID, desc)
+		logVerbosef("[%s]   conn.Read -> %s\n", connUUID, desc)
 		packetLen, err := conn.Read(buf)
 		if err != nil {
-			log.Printf("[%s]   Error read: %s\n", connUUID, err.Error())
+			// Don't log EOF errors
+			if err != io.EOF {
+				log.Printf("[%s]   Error read: %s\n", connUUID, err.Error())
+			}
 			return
 		}
 		t := time.Now()
@@ -185,7 +189,7 @@ func handleRequest(conn net.Conn, rconn net.Conn, desc string, connUUID string) 
 		b := buf[:packetLen]
 
 		// Dump buffer to log for debug
-		log.Printf("[%s]   Received %d bytes: %s\n", connUUID, packetLen, desc)
+		logVerbosef("[%s]   Received %d bytes: %s\n", connUUID, packetLen, desc)
 		logVerbosef("[%s]   HEXDUMP:\n%s", connUUID, hex.Dump(b[:packetLen]))
 
 		// Extract sender and recipients
@@ -198,7 +202,7 @@ func handleRequest(conn net.Conn, rconn net.Conn, desc string, connUUID string) 
 
 		// Write SMTP data to destination
 		start = time.Now()
-		log.Printf("[%s]   conn.Write -> %s\n", connUUID, desc)
+		logVerbosef("[%s]   conn.Write -> %s\n", connUUID, desc)
 		_, err = rconn.Write(b)
 		if err != nil {
 			log.Printf("[%s]   Error write: %s\n", connUUID, err.Error())

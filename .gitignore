@@ -22,9 +22,11 @@
 *.o
 *.pm.tdy
 *.bs
+*.log
 rot/rot
 healthcheck/healthcheck
 smtp-proxy/smtp-proxy
+tcp-utils/tcp-server_echo
 
 # Devel::Cover
 cover_db/
